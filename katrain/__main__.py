@@ -712,7 +712,7 @@ class KaTrainGui(Screen, KaTrainBase):
         self.last_key_down = keycode
         ctrl_pressed = "ctrl" in modifiers or ("meta" in modifiers and kivy_platform == "macosx")
         shift_pressed = "shift" in modifiers
-        if self.controls.note.focus:
+        if self.controls.note.focus or self.controls.chat_input.focus:
             return  # when making notes, don't allow keyboard shortcuts
         popup = self.popup_open
         if popup:

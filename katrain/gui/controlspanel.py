@@ -252,3 +252,60 @@ class ControlsPanel(BoxLayout):
                 self.timer.state = (main_time_remaining, None, ai)
             else:
                 self.timer.state = (max(0, time_remaining), max(0, periods_rem), ai)
+
+    def send_chat_message(self, message):
+        if not message.strip():
+            return
+            
+        chat_history = self.ids.chat_history
+        chat_input = self.ids.chat_input
+        
+        # Add user message to chat
+        chat_history.text += f"\n[color=cccccc]You:[/color] {message}\n"
+        
+        # Clear input
+        chat_input.text = ""
+        
+        # Get current game state
+        game = self.katrain.game
+        current_node = game.current_node
+        
+        # Create context about the current game state
+        context = {
+            "move_number": current_node.move_number,
+            "current_player": current_node.player,
+            "score": current_node.score,
+            "winrate": current_node.winrate,
+        }
+        
+        # Send to LLM with context (implement this based on your LLM integration)
+        response = self.get_llm_response(message, context)
+        
+        # Add response to chat
+        chat_history.text += f"[color=99ff99]Assistant:[/color] {response}\n"
+        
+        # Scroll to bottom
+        chat_history.scroll_y = 0
+        
+    def get_llm_response(self, message, context):
+        """Implement your LLM integration here"""
+        try:
+            # Example integration - replace with your actual LLM implementation
+            from katrain.core.llm import LLMInterface
+            llm = LLMInterface()
+            
+            prompt = f"""
+            Context about the current game:
+            - Move {context['move_number']}
+            - {context['current_player']} to play
+            - Current score estimate: {context['score']}
+            - Current win rate: {context['winrate']}
+            
+            User question: {message}
+            """
+            
+            response = llm.get_response(prompt)
+            return response
+            
+        except Exception as e:
+            return f"Sorry, I encountered an error: {str(e)}"

@@ -273,6 +273,9 @@ msgstr "Details"
 msgid "tab:notes"
 msgstr "Notes"
 
+msgid "tab:chat"
+msgstr "Chat"
+
 msgid "closedlabel:scoregraph"
 msgstr "Score Graph"
 

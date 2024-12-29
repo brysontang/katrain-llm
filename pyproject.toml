@@ -27,6 +27,7 @@ chardet = "^5.2.0"  # for automatic encoding detection
 # Avoid PyPI/Poetry problem: https://github.com/python-poetry/poetry/issues/9293
 docutils = ">=0.21.2"
 openai = "^1.58.1"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"

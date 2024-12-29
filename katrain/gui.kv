@@ -556,6 +556,8 @@
     notes_panel: notes_panel
     info: info
     note: note
+    chatbox: chatbox
+    chat_input: chat_input
     status: status
     timer_or_movetree: timer_or_movetree
     move_tree: move_tree
@@ -639,15 +641,17 @@
         id: notes_panel
         size_hint_y_open: 1
         closed_label: 'closedlabel:info&notes'
-        options: ['info','info-details','notes']
-        option_colors: [Theme.INFO_TAB_FONT_COLOR,Theme.INFO_TAB_FONT_COLOR,Theme.NOTES_TAB_FONT_COLOR]
-        option_active: [True,False,False]
+        options: ['info','info-details','notes','chat']
+        option_colors: [Theme.INFO_TAB_FONT_COLOR,Theme.INFO_TAB_FONT_COLOR,Theme.NOTES_TAB_FONT_COLOR,Theme.INFO_TAB_FONT_COLOR]
+        option_active: [True,False,False,False]
         on_option_state:
             info.detailed = args[1]['info-details']
             info.size_hint_y = int(args[1]['info'] or info.detailed)+EPSILON
-            info.opacity =  int(args[1]['info'] or info.detailed)
+            info.opacity = int(args[1]['info'] or info.detailed)
             notebox.size_hint_y = int(args[1]['notes'])*0.66+EPSILON
             notebox.opacity = int(args[1]['notes'])
+            chatbox.size_hint_y = int(args[1]['chat'])*0.66+EPSILON
+            chatbox.opacity = int(args[1]['chat'])
             app.gui.update_state()
         options_height: root.tab_option_height
         BGBoxLayout:
@@ -687,11 +691,37 @@
                         Line:
                             points: self.x, self.y+self.height, self.x+self.width, self.y+self.height
                             width: 1
+            BoxLayout:
+                id: chatbox
+                size_hint: 1, 0
+                opacity: 0
+                orientation: 'vertical'
+                padding: dp(5)
+                spacing: dp(5)
+                ScrollableLabel:
+                    id: chat_history
+                    size_hint: 1, 1
+                    markup: True
+                BoxLayout:
+                    size_hint: 1, None
+                    height: dp(40)
+                    spacing: dp(5)
+                    TextInput:
+                        id: chat_input
+                        size_hint: 0.85, None
+                        height: dp(40)
+                        multiline: False
+                        hint_text: i18n._('Ask about the game...')
+                        on_text_validate: root.send_chat_message(self.text)
+                    Button:
+                        size_hint: 0.15, None
+                        height: dp(40)
+                        text: i18n._('Send')
+                        on_release: root.send_chat_message(chat_input.text)
     Label:
         size_hint_y: EPSILON # takes up remaining space if info is closed
 
-
-<MenuItem>
+<MenuItem>:
     font_size: self.height * 0.5
     size_hint_y: None
     height: dp(50)

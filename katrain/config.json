@@ -193,6 +193,12 @@
                         "info-details": false,
                         "notes": false
                     }
+                ],
+                "chatbox": [
+                    "open",
+                    {
+                        "chatbox": true
+                    }
                 ]
             }
         },
@@ -226,6 +232,12 @@
                         "info": true,
                         "info-details": true,
                         "notes": false
+                    }
+                ],
+                "chatbox": [
+                    "open",
+                    {
+                        "chatbox": true
                     }
                 ]
             }
