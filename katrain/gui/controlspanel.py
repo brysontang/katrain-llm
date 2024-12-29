@@ -277,7 +277,7 @@ class ControlsPanel(BoxLayout):
             "score": current_node.score,
             "winrate": current_node.winrate,
         }
-        
+
         # Send to LLM with context (implement this based on your LLM integration)
         response = self.get_llm_response(message, context)
         
@@ -294,6 +294,28 @@ class ControlsPanel(BoxLayout):
             from katrain.core.llm import LLMInterface
             llm = LLMInterface()
             
+            current_node = self.katrain.game.current_node
+            game = self.katrain.game
+            board_state = str(game)
+
+            ai_recommendations = ""
+            if current_node.analysis_exists:
+                # Get top candidate moves
+                for i, move in enumerate(current_node.candidate_moves[:3]):  # top 3 moves
+                    points_lost = move.get("pointsLost", 0)
+                    win_rate = move.get("winrate", 0)
+                    visits = move.get("visits", 0)
+                    move_coords = move.get("move", "")
+                    
+                    ai_recommendations += f"\nMove {i+1}: {move_coords}"
+                    ai_recommendations += f"\n  - Points lost: {points_lost:.1f}"
+                    ai_recommendations += f"\n  - Win rate: {win_rate:.1%}"
+                    ai_recommendations += f"\n  - Analysis visits: {visits}"
+                    
+                    # Include predicted variation if available
+                    if "pv" in move:
+                        ai_recommendations += f"\n  - Predicted variation: {' '.join(move['pv'][:5])}"  # first 5 moves
+
             prompt = f"""
             Context about the current game:
             - Move {context['move_number']}
@@ -301,9 +323,14 @@ class ControlsPanel(BoxLayout):
             - Current score estimate: {context['score']}
             - Current win rate: {context['winrate']}
             
+            Current board state:
+            {board_state}
+            
+            AI Analysis Recommendations:
+            {ai_recommendations}
+            
             User question: {message}
             """
-            
             response = llm.get_response(prompt)
             return response
             
